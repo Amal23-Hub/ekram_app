@@ -3,11 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
+import 'deces.dart';
 
 class InformationsDeclarantForm extends StatefulWidget {
   const InformationsDeclarantForm({Key? key}) : super(key: key);
-
   @override
   State<InformationsDeclarantForm> createState() =>
       _InformationsDeclarantFormState();
@@ -15,23 +14,21 @@ class InformationsDeclarantForm extends StatefulWidget {
 
 class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
   final _formKey = GlobalKey<FormState>();
-  bool isHovered = false;
-  bool isPressed = false;
-
   bool _nomValid = true;
   bool _nomArabeValid = true;
   bool _prenomValid = true;
   bool _prenomArabeValid = true;
   bool _numPieceValid = true;
   bool _telValid = true;
+  bool isHovered = false;
+  bool isPressed = false;
 
   final TextEditingController Nom_declarant = TextEditingController();
   final TextEditingController Nom_arabe_declarant = TextEditingController();
   final TextEditingController Prenom_declarant = TextEditingController();
   final TextEditingController Prenom_arabe_declarant = TextEditingController();
   final TextEditingController Telephone_declarant = TextEditingController();
-  final TextEditingController Num_piece_identite_declarant = TextEditingController();
-    final TextEditingController Type_identite_declarant = TextEditingController();
+  final TextEditingController Num_piece_identite_declarant =TextEditingController();
 
   final List<String> _idTypeOptions = [
     'Carte d\'identité nationale',
@@ -39,6 +36,7 @@ class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
     'Carte de séjour',
   ];
 
+  // ignore: unused_field
   final List<String> _lienAffiliation = [
     'Conjoint',
     'Père',
@@ -48,7 +46,26 @@ class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
     'Autre',
   ];
 
+List<dynamic> _options4 = []; 
+// ignore: unused_element
+Future<void> _fetchOptions() async {
+  try {
+    final response4 = await http.get(Uri.parse(
+        'http://98.71.95.115/referential-api/affiliations'));
+
+    if (response4.statusCode == 200) {
+      setState(() {
+        _options4 = json.decode(response4.body);
+      });
+    }
+
+  } catch (error) {
+    print(error);
+  }
+}
+
   String? _selectedIdType;
+  // ignore: unused_field
   String? _selectedLienAffiliation;
 
     @override
@@ -61,7 +78,6 @@ class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
         Prenom_declarant.text=data['declaration']?['declarant']?['firstName'] ?? '';
         Prenom_arabe_declarant.text=data['declaration']?['declarant']?['firstNameAr'] ?? '';
         Telephone_declarant.text=data['declaration']?['declarant']?['phoneNumber'] ?? '';
-        // Type_identite_declarant = data['decalartion']?['declarant']?['nationalIDType']?? '';
         Num_piece_identite_declarant.text=data['declaration']?['declarant']?['nationalID'] ?? '';
         
     
@@ -85,7 +101,7 @@ class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("images/bg.jpg"),
+            image: AssetImage("images/bg.png"),
             fit: BoxFit.cover,
           ),
         ),
@@ -98,9 +114,9 @@ class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
                 child: Column(
                   children: [
                     Image.asset(
-                      'images/ekram_logo2.png',
-                      width: 170,
-                      height: 80,
+                      'images/ikram_logo.png',
+                      width: 150,
+                      height: 70,
                       alignment: Alignment.topLeft,
                     ),
                     _buildTabs(),
@@ -175,16 +191,18 @@ class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
                               keyboardType: TextInputType.number,
                               isValid: _telValid,
                             ),
-                            _buildDropdownButtonFormField(
-                              label: 'Lien d\'affiliation',
-                              items: _lienAffiliation,
-                              value: _selectedLienAffiliation,
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedLienAffiliation = value;
-                                });
-                              },
-                            ),
+                            // _buildDropdownButtonFormField(
+                            //   label: 'Lien d\'affiliation',
+                            //   items: _lienAffiliation,
+                            //   value: _selectedLienAffiliation,
+                            //   onChanged: (value) {
+                            //     setState(() {
+                            //       _selectedLienAffiliation = value;
+                            //     });
+                            //   },
+                            // ),
+
+                            buildDropdown('Lien d\'affiliation', _options4),
                             const SizedBox(
                               height: 30,
                             ),
@@ -193,7 +211,7 @@ class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
                                   const EdgeInsets.only(left: 70, right: 70),
                               height: 40,
                               child: ElevatedButton(
-                                 style: ElevatedButton.styleFrom(
+                                  style: ElevatedButton.styleFrom(
                                   backgroundColor: isPressed
                                       ? const Color(0xFF014a71)
                                       : (isHovered
@@ -225,7 +243,7 @@ class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => const InformationsDecesForm(),
+                                        builder: (context) => const InformationsDeceForm (),
                                       ),
                                     );
                                   }
@@ -243,7 +261,6 @@ class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
                                 ),
                               ),
                             ),
-                            
                             const SizedBox(
                               height: 30,
                             ),
@@ -354,13 +371,13 @@ class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
         children: [
           _buildCircleButton('1', const Color.fromARGB(255, 82, 53, 43)),
           _buildDivider(),
-          _buildCircleButton('2', const Color.fromARGB(255, 189, 184, 182)),
+          _buildCircleButton('2', const Color.fromARGB(255, 136, 194, 201)),
           _buildDivider(),
-          _buildCircleButton('3', const Color.fromARGB(255, 189, 184, 182)),
+          _buildCircleButton('3', const Color.fromARGB(255, 136, 194, 201)),
           _buildDivider(),
-          _buildCircleButton('4', const Color.fromARGB(255, 189, 184, 182)),
+          _buildCircleButton('4', const Color.fromARGB(255, 136, 194, 201)),
           _buildDivider(),
-          _buildCircleButton('5', const Color.fromARGB(255, 189, 184, 182)),
+          _buildCircleButton('5', const Color.fromARGB(255, 136, 194, 201)),
         ],
       ),
     );
@@ -391,7 +408,7 @@ class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
     return Container(
       width: 29,
       height: 2,
-      color: const Color.fromARGB(255, 52, 29, 16),
+      color: const Color(0xFFc9b079),
     );
   }
 }
@@ -411,7 +428,7 @@ class InformationsDecesForm extends StatelessWidget {
       Uri.parse(
           'http://98.71.95.115/orchestrator-api/processings/declaration-details/84c245cc-bc4c-4595-8057-fbc80746cf50?assignmentBCH=1'),
       headers: {
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InJhYmF0X2NvbnN0YXRldXIiLCJmaXJzdE5hbWUiOiJDb25zdGF0ZXVyIiwibGFzdE5hbWUiOiJSYWJhdCIsInVzZXJJZCI6ImQzYjc1MjhjLWQwNjMtNDMyNC04NWI0LTgxMGM5NjcyN2JhZSIsImFzc2lnbm1lbnRCQ0giOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiT2JzZXJ2ZXIiLCJleHAiOjE3MTU5NTY3OTAsImlzcyI6InlvdXJfaXNzdWVyIiwiYXVkIjoieW91cl9hdWRpZW5jZSJ9.hxQTTTcJdSBgiTqOg8XOt9iDMKWkci_syQJaI-nS_jc',
+        'Authorization': 'Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InJhYmF0X2NvbnN0YXRldXIiLCJmaXJzdE5hbWUiOiJDb25zdGF0ZXVyIiwibGFzdE5hbWUiOiJSYWJhdCIsInVzZXJJZCI6ImQzYjc1MjhjLWQwNjMtNDMyNC04NWI0LTgxMGM5NjcyN2JhZSIsImFzc2lnbm1lbnRCQ0giOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiT2JzZXJ2ZXIiLCJleHAiOjE3MTYwNDYxODgsImlzcyI6InlvdXJfaXNzdWVyIiwiYXVkIjoieW91cl9hdWRpZW5jZSJ9.F4HX10HOJij4GX0LIfVLqniL9OfwIXND1TDrSBD3rho',
       },
     );
     if (response.statusCode == 200) {
@@ -423,3 +440,42 @@ class InformationsDecesForm extends StatelessWidget {
       throw Exception('Failed to load data');
     }
   }
+
+
+
+Widget buildDropdown(String label, List<dynamic> options) {
+  return Container(
+    padding: const EdgeInsets.only(right: 22, left: 22),
+    child: DropdownButtonFormField<String>(
+      value: null,
+      onChanged: (value) {},
+      items: options.map<DropdownMenuItem<String>>((dynamic option) {
+        return DropdownMenuItem<String>(
+          value: option['nameFr'],
+          child: Text(option['nameFr']),
+        );
+      }).toList(),
+      decoration: InputDecoration(
+        labelText: '$label *',
+        labelStyle: const TextStyle(
+          color: Color.fromARGB(255, 69, 67, 67),
+          fontSize: 16,
+          fontWeight: FontWeight.w800,
+        ),
+        border: const UnderlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFF014a71)),
+        ),
+        focusedBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFF014a71)),
+        ),
+      ),
+      iconSize: 30,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Veuillez sélectionner une option';
+        }
+        return null;
+      },
+    ),
+  );
+}

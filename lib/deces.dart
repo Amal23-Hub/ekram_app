@@ -1,18 +1,18 @@
-// ignore_for_file: non_constant_identifier_names, use_super_parameters, library_private_types_in_public_api
+// ignore_for_file: non_constant_identifier_names, use_super_parameters, library_private_types_in_public_api, avoid_print, unused_field
 
 import 'package:flutter/material.dart';
 import 'decede.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class InformationsDecesForm extends StatefulWidget {
-  const InformationsDecesForm({Key? key}) : super(key: key);
+class InformationsDeceForm extends StatefulWidget {
+  const InformationsDeceForm({Key? key}) : super(key: key);
 
   @override
-  _InformationsDecesFormState createState() => _InformationsDecesFormState();
+  _InformationsDeceFormState createState() => _InformationsDeceFormState();
 }
 
-class _InformationsDecesFormState extends State<InformationsDecesForm> {
+class _InformationsDeceFormState extends State<InformationsDeceForm> {
   final TextEditingController date_deces_controller = TextEditingController();
   final TextEditingController time_deces_controller = TextEditingController();
   final TextEditingController Adresse_deces_controller =
@@ -22,56 +22,25 @@ class _InformationsDecesFormState extends State<InformationsDecesForm> {
   bool isPressed = false;
   bool _AdresselValid = true;
 
-  final List<String> _province = [
-    'RABAT',
-    'SKHIRATE-TEMARA',
-    'MOHAMMADIA',
-    'AGADIR IDA OU TANANE',
-    'INEZGANE-AIT MELLOUL',
-    'OUJDA-ANGAD',
-    'TANGER-ASSILAH',
-    'SALE',
-    'FES',
-    'MARRAKECH',
-    'MEKNES',
-    'MDIQ-FNIDEQ',
-    'CASABLANCA',
-    'KHEMISSET',
-    'CHTOUKA-AIT BAHA',
-    'TAROUDANNT',
-    'TIZNIT',
-    'OUARZAZATE',
-    'ZAGORA',
-    'AL HOCEIMA',
-    'TAZA',
-    'BENI MELLAL',
-    'AZILAL',
-    'MOULAY-YACOUB',
-  ];
+  String? _selectedOption2;
+  String? _selectedOption3;
+  String? _selectedOption6;
+  String? _selectedOptionprovince;
+  List<dynamic> _optionscountries = [];
+  List<dynamic> _optionsArrondissement = [];
 
-  final List<String> _idTypeOptions = [
-    'Domicile',
-    'Hopital publique',
-    'Hopital privé',
-  ];
-  final List<String> _Cimetierdenterrement = [
-    'Al-shouhada',
-    'Lalou',
-    'Allal Ibn Abdullah',
-    'AS-sadiq',
-    'La grande Cimetière',
-  ];
-  String? _selectedIdType;
-  String? _SelectedCimetierdenterrement;
-
-  String? _selectedProvince;
-  String? _selectedCommune;
+  List<dynamic> _options2 = [];
+  List<dynamic> _options3 = [];
+  List<dynamic> _options6 = [];
+  List<dynamic> _optionsprovince = [];
+  // ignore: prefer_typing_uninitialized_variables
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
+    _fetchOptions();
     fetchData().then((data) {
       if (data != null) {
         date_deces_controller.text =
@@ -101,7 +70,7 @@ class _InformationsDecesFormState extends State<InformationsDecesForm> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("images/bg.jpg"),
+            image: AssetImage("images/bg.png"),
             fit: BoxFit.cover,
           ),
         ),
@@ -114,7 +83,7 @@ class _InformationsDecesFormState extends State<InformationsDecesForm> {
                 child: Column(
                   children: [
                     Image.asset(
-                      'images/ekram_logo2.png',
+                      'images/ikram_logo.png',
                       width: 150,
                       height: 70,
                       alignment: Alignment.topLeft,
@@ -153,34 +122,41 @@ class _InformationsDecesFormState extends State<InformationsDecesForm> {
                             ),
                             _buildDropdownButtonFormField(
                               label: 'Lieu du décès',
-                              items: _idTypeOptions,
-                              value: _selectedIdType,
-                              onChanged: (value) {
+                              options: _options2,
+                              value: _selectedOption2,
+                              onChanged: (newValue) {
                                 setState(() {
-                                  _selectedIdType = value;
+                                  _selectedOption2 = newValue;
                                 });
                               },
                             ),
-                            _buildDropdownButtonFormField(
-                              label: 'Préfecture/Province',
-                              items: _province,
-                              value: _selectedProvince,
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedProvince = value;
-                                });
-                              },
-                            ),
-                            _buildDropdownButtonFormField(
-                              label: 'Commune/Arrondissement',
-                              items: _province,
-                              value: _selectedCommune,
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedCommune = value;
-                                });
-                              },
-                            ),
+                             buildDropdown(
+                                'Préfecture/Province', _optionsprovince),
+                            buildDropdown(
+                                'Commune/Arrondissement', _optionsArrondissement),
+                            // _buildDropdownButtonFormField(
+                            //   label: 'Commune/Arrondissement',
+                            //   options: _options3,
+                            //   value: _selectedOption3,
+                            //   onChanged: (newValue) {
+                            //     setState(() {
+                            //       _selectedOption3 = newValue;
+                            //     });
+                            //   },
+                            // ),
+                            //Commune/Arrondissement
+
+                            // _buildDropdownButtonFormField(
+                            //   label: 'Cause de deces',
+                            //   options: _options5,
+                            //   value: _selectedOption5,
+                            //   onChanged: (newValue) {
+                            //     setState(() {
+                            //       _selectedOption5 = newValue;
+                            //     });
+                            //   },
+                            // ),
+
                             _buildTextField(
                               label: 'Adresse Habituelle',
                               controller: Adresse_deces_controller,
@@ -188,11 +164,11 @@ class _InformationsDecesFormState extends State<InformationsDecesForm> {
                             ),
                             _buildDropdownButtonFormField(
                               label: 'Cimetière d\'enterrement',
-                              items: _Cimetierdenterrement,
-                              value: _SelectedCimetierdenterrement,
-                              onChanged: (value) {
+                              options: _options6,
+                              value: _selectedOption6,
+                              onChanged: (newValue) {
                                 setState(() {
-                                  _SelectedCimetierdenterrement = value;
+                                  _selectedOption6 = newValue;
                                 });
                               },
                             ),
@@ -226,7 +202,7 @@ class _InformationsDecesFormState extends State<InformationsDecesForm> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                            const InformationsDecedeForm(),
+                                            const  InformationsDeclarantForm(),
                                       ),
                                     );
                                   }
@@ -340,7 +316,7 @@ class _InformationsDecesFormState extends State<InformationsDecesForm> {
 
   Widget _buildDropdownButtonFormField({
     required String label,
-    required List<String> items,
+    required List<dynamic> options,
     required String? value,
     required ValueChanged<String?> onChanged,
   }) {
@@ -349,10 +325,10 @@ class _InformationsDecesFormState extends State<InformationsDecesForm> {
       child: DropdownButtonFormField<String>(
         value: value,
         onChanged: onChanged,
-        items: items.map((String item) {
+        items: options.map<DropdownMenuItem<String>>((dynamic option) {
           return DropdownMenuItem<String>(
-            value: item,
-            child: Text(item),
+            value: option['nameFr'],
+            child: Text(option['nameFr']),
           );
         }).toList(),
         decoration: InputDecoration(
@@ -376,119 +352,219 @@ class _InformationsDecesFormState extends State<InformationsDecesForm> {
       ),
     );
   }
-}
-
-Widget _buildTabs() {
-  return Center(
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-     children: [
-        _buildCircleButton2(const Icon(Icons.verified,size: 27,)), 
-        _buildDivider(),
-        _buildCircleButton('2', const Color.fromARGB(255, 82, 53, 43)),
-        _buildDivider(),
-        _buildCircleButton('3', const Color.fromARGB(255, 189, 184, 182)),
-        _buildDivider(),
-        _buildCircleButton('4', const Color.fromARGB(255, 189, 184, 182)),
-        _buildDivider(),
-        _buildCircleButton('5', const Color.fromARGB(255, 189, 184, 182)),
-      ],
-    ),
-  );
-}
-
-Widget _buildCircleButton2( Icon icon) {
-  return Container(
-    width: 40,
-    height: 40,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(10),
-      color: const Color.fromARGB(255, 189, 184, 182),
-    ),
-    child: Center(
+  Widget _buildTabs() {
+    return Center(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          icon,
-       
+          _buildCircleButton2(const Icon(
+            Icons.verified,
+            size: 27,
+          )),
+          _buildDivider(),
+          _buildCircleButton('2', const Color.fromARGB(255, 82, 53, 43)),
+          _buildDivider(),
+          _buildCircleButton('3', const Color.fromARGB(255, 189, 184, 182)),
+          _buildDivider(),
+          _buildCircleButton('4', const Color.fromARGB(255, 189, 184, 182)),
+          _buildDivider(),
+          _buildCircleButton('5', const Color.fromARGB(255, 189, 184, 182)),
         ],
       ),
-    ),
-  );
-}
+    );
+  }
 
-Widget _buildCircleButton(String text, Color color) {
-  return Container(
-    width: 40,
-    height: 40,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(10),
-      color: color,
-    ),
-    child: Center(
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
+  Widget _buildCircleButton2(Icon icon) {
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: const Color.fromARGB(255, 189, 184, 182),
+      ),
+      child: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            icon,
+          ],
         ),
       ),
-    ),
-  );
+    );
+  }
+
+  Widget _buildCircleButton(String text, Color color) {
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: color,
+      ),
+      child: Center(
+        child: Text(
+          text,
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Container(
+      width: 29,
+      height: 2,
+      color: const Color(0xFFc9b079),
+    );
+  }
+
+  Widget _buildDateTextField(
+      {required String label,
+      required TextEditingController controller,
+      required VoidCallback onTap}) {
+    return Container(
+      padding: const EdgeInsets.only(right: 22, left: 16),
+      child: TextField(
+        controller: controller,
+        readOnly: true,
+        onTap: onTap,
+        decoration: InputDecoration(
+          labelText: '$label *',
+          filled: true,
+          fillColor: Colors.transparent,
+          labelStyle: const TextStyle(
+              color: Color.fromARGB(255, 69, 67, 67),
+              fontSize: 16,
+              fontWeight: FontWeight.w700),
+          border: const UnderlineInputBorder(
+              borderSide: BorderSide(width: 2, color: Color(0xFF014a71))),
+          focusedBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(width: 2, color: Color(0xFF014a71))),
+          suffixIcon: const Icon(Icons.calendar_today),
+        ),
+      ),
+    );
+  }
+
+  Future<Map<String, dynamic>?> fetchData() async {
+    final response = await http.get(
+      Uri.parse(
+          'http://98.71.95.115/orchestrator-api/processings/declaration-details/84c245cc-bc4c-4595-8057-fbc80746cf50?assignmentBCH=1'),
+      headers: {
+        'Authorization':
+            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InJhYmF0X2NvbnN0YXRldXIiLCJmaXJzdE5hbWUiOiJDb25zdGF0ZXVyIiwibGFzdE5hbWUiOiJSYWJhdCIsInVzZXJJZCI6ImQzYjc1MjhjLWQwNjMtNDMyNC04NWI0LTgxMGM5NjcyN2JhZSIsImFzc2lnbm1lbnRCQ0giOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiT2JzZXJ2ZXIiLCJleHAiOjE3MTYwNDYxODgsImlzcyI6InlvdXJfaXNzdWVyIiwiYXVkIjoieW91cl9hdWRpZW5jZSJ9.F4HX10HOJij4GX0LIfVLqniL9OfwIXND1TDrSBD3rho',
+      },
+    );
+    if (response.statusCode == 200) {
+      print('Response body: ${response.body}');
+      return json.decode(response.body);
+    } else {
+      print('Failed to load data. Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+      throw Exception('Failed to load data');
+    }
+  }
+
+  Future<void> _fetchOptions() async {
+    try {
+      final response1 = await http.get(Uri.parse(
+          'http://98.71.95.115/referential-api/status?roles=Observer'));
+      final response2 = await http
+          .get(Uri.parse('http://98.71.95.115/referential-api/death_place'));
+      final response3 = await http.get(Uri.parse(
+          'http://98.71.95.115/referential-api/administrative-hierarchies'));
+      final response4 = await http
+          .get(Uri.parse('http://98.71.95.115/referential-api/affiliations'));
+      final response5 = await http.get(Uri.parse(
+          'http://98.71.95.115/referential-api/death-causes/by-type?isExternal=false'));
+      final response6 = await http.get(
+          Uri.parse('http://98.71.95.115/referential-api/cemeteries/by-bch/1'));
+      final response7 = await http
+          .get(Uri.parse('http://98.71.95.115/referential-api/countries'));
+      final response8 = await http.get(Uri.parse(
+          'http://98.71.95.115/referential-api/administrative-hierarchies/1'));
+
+      final response9 = await http.get(Uri.parse(
+          'http://98.71.95.115/referential-api/administrative-hierarchies/by-parent/14'));
+      if (response1.statusCode == 200) {
+        // Traiter la réponse si nécessaire
+      }
+      if (response2.statusCode == 200) {
+        setState(() {
+          _options2 = json.decode(response2.body);
+        });
+      }
+      if (response3.statusCode == 200) {
+        setState(() {
+          _options3 = json.decode(response3.body);
+        });
+      }
+      if (response4.statusCode == 200) {
+        // Traiter la réponse si nécessaire
+      }
+      if (response5.statusCode == 200) {
+        // Traiter la réponse si nécessaire
+      }
+      if (response6.statusCode == 200) {
+        setState(() {
+          _options6 = json.decode(response6.body);
+        });
+      }
+      if (response7.statusCode == 200) {
+        _optionscountries = json.decode(response7.body);
+      }
+      if (response9.statusCode == 200) {
+        _optionsArrondissement = json.decode(response9.body);
+      }
+      if (response8.statusCode == 200) {
+        setState(() {
+          _optionsprovince = json.decode(response8.body);
+        });
+      }
+    } catch (error) {
+      print(error);
+    }
+  }
 }
 
-Widget _buildDivider() {
-  return Container(
-    width: 29,
-    height: 2,
-    color: const Color.fromARGB(255, 52, 29, 16),
-  );
-}
 
-Widget _buildDateTextField(
-    {required String label,
-    required TextEditingController controller,
-    required VoidCallback onTap}) {
+Widget buildDropdown(String label, List<dynamic> options) {
   return Container(
-    padding: const EdgeInsets.only(right: 22, left: 16),
-    child: TextField(
-      controller: controller,
-      readOnly: true,
-      onTap: onTap,
+    padding: const EdgeInsets.only(right: 22, left: 22),
+    child: DropdownButtonFormField<String>(
+      value: null,
+      onChanged: (value) {},
+      items: options.map<DropdownMenuItem<String>>((dynamic option) {
+        return DropdownMenuItem<String>(
+          value: option['nameFr'],
+          child: Text(option['nameFr']),
+        );
+      }).toList(),
       decoration: InputDecoration(
         labelText: '$label *',
-        filled: true,
-        fillColor: Colors.transparent,
         labelStyle: const TextStyle(
-            color: Color.fromARGB(255, 69, 67, 67),
-            fontSize: 16,
-            fontWeight: FontWeight.w700),
+          color: Color.fromARGB(255, 69, 67, 67),
+          fontSize: 16,
+          fontWeight: FontWeight.w800,
+        ),
         border: const UnderlineInputBorder(
-            borderSide: BorderSide(width: 2, color: Color(0xFF014a71))),
+          borderSide: BorderSide(color: Color(0xFF014a71)),
+        ),
         focusedBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(width: 2, color: Color(0xFF014a71))),
-        suffixIcon: const Icon(Icons.calendar_today),
+          borderSide: BorderSide(color: Color(0xFF014a71)),
+        ),
       ),
+      iconSize: 30,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Veuillez sélectionner une option';
+        }
+        return null;
+      },
     ),
   );
-}
-
-Future<Map<String, dynamic>?> fetchData() async {
-  final response = await http.get(
-    Uri.parse(
-        'http://98.71.95.115/orchestrator-api/processings/declaration-details/84c245cc-bc4c-4595-8057-fbc80746cf50?assignmentBCH=1'),
-    headers: {
-      'Authorization':
-          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InJhYmF0X2NvbnN0YXRldXIiLCJmaXJzdE5hbWUiOiJDb25zdGF0ZXVyIiwibGFzdE5hbWUiOiJSYWJhdCIsInVzZXJJZCI6ImQzYjc1MjhjLWQwNjMtNDMyNC04NWI0LTgxMGM5NjcyN2JhZSIsImFzc2lnbm1lbnRCQ0giOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiT2JzZXJ2ZXIiLCJleHAiOjE3MTU5NTY3OTAsImlzcyI6InlvdXJfaXNzdWVyIiwiYXVkIjoieW91cl9hdWRpZW5jZSJ9.hxQTTTcJdSBgiTqOg8XOt9iDMKWkci_syQJaI-nS_jc',
-    },
-  );
-  if (response.statusCode == 200) {
-    print('Response body: ${response.body}');
-    return json.decode(response.body);
-  } else {
-    print('Failed to load data. Status code: ${response.statusCode}');
-    print('Response body: ${response.body}');
-    throw Exception('Failed to load data');
-  }
 }

@@ -3,8 +3,10 @@ import 'dart:math' show cos, sqrt, asin;
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+// ignore: use_key_in_widget_constructors
 class MapScreen extends StatefulWidget {
   @override
+  // ignore: library_private_types_in_public_api
   _MapScreenState createState() => _MapScreenState();
 }
 
@@ -15,7 +17,7 @@ class _MapScreenState extends State<MapScreen> {
   final LatLng _position1 = const LatLng(32.2997, -9.2372); // Première position
   final LatLng _position2 = const LatLng(30.4333, -9.6); // Deuxième position
 
-  Set<Marker> _markers = {};
+  final Set<Marker> _markers = {};
   late LatLng _previousPosition;
 
   @override
@@ -55,7 +57,6 @@ class _MapScreenState extends State<MapScreen> {
             (1 - c((_previousPosition.longitude - _position2.longitude) * p)) /
             2;
     var distance = 12742 * asin(sqrt(a));
-    print('Distance: $distance km');
     return distance;
   }
 
