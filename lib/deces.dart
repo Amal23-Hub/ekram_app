@@ -15,20 +15,16 @@ class InformationsDeceForm extends StatefulWidget {
 class _InformationsDeceFormState extends State<InformationsDeceForm> {
   final TextEditingController date_deces_controller = TextEditingController();
   final TextEditingController time_deces_controller = TextEditingController();
-  final TextEditingController Adresse_deces_controller =
-      TextEditingController();
-
+  final TextEditingController Adresse_deces_controller = TextEditingController();
   bool isHovered = false;
   bool isPressed = false;
   bool _AdresselValid = true;
-
   String? _selectedOption2;
   String? _selectedOption3;
   String? _selectedOption6;
   String? _selectedOptionprovince;
   List<dynamic> _optionscountries = [];
   List<dynamic> _optionsArrondissement = [];
-
   List<dynamic> _options2 = [];
   List<dynamic> _options3 = [];
   List<dynamic> _options6 = [];
@@ -60,7 +56,6 @@ class _InformationsDeceFormState extends State<InformationsDeceForm> {
     Adresse_deces_controller.dispose();
     time_deces_controller.dispose();
     date_deces_controller.dispose();
-
     super.dispose();
   }
 
@@ -83,7 +78,7 @@ class _InformationsDeceFormState extends State<InformationsDeceForm> {
                 child: Column(
                   children: [
                     Image.asset(
-                      'images/ikram_logo.png',
+                      'images/ekram_logo2.png',
                       width: 150,
                       height: 70,
                       alignment: Alignment.topLeft,
@@ -248,9 +243,9 @@ class _InformationsDeceFormState extends State<InformationsDeceForm> {
     if (picked != null) {
       setState(() {
         date_deces_controller.text = picked.toString().split(" ")[0];
-      });
+        });
+      }
     }
-  }
 
   Future<void> _selectedTime(BuildContext context) async {
     TimeOfDay time = TimeOfDay.now();
@@ -273,7 +268,8 @@ class _InformationsDeceFormState extends State<InformationsDeceForm> {
     bool isValid = true,
     TextInputType? keyboardType,
     void Function(String)? onChanged,
-  }) {
+  }) 
+  {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 22),
       child: Column(
@@ -456,7 +452,7 @@ class _InformationsDeceFormState extends State<InformationsDeceForm> {
           'http://98.71.95.115/orchestrator-api/processings/declaration-details/84c245cc-bc4c-4595-8057-fbc80746cf50?assignmentBCH=1'),
       headers: {
         'Authorization':
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InJhYmF0X2NvbnN0YXRldXIiLCJmaXJzdE5hbWUiOiJDb25zdGF0ZXVyIiwibGFzdE5hbWUiOiJSYWJhdCIsInVzZXJJZCI6ImQzYjc1MjhjLWQwNjMtNDMyNC04NWI0LTgxMGM5NjcyN2JhZSIsImFzc2lnbm1lbnRCQ0giOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiT2JzZXJ2ZXIiLCJleHAiOjE3MTYwNDYxODgsImlzcyI6InlvdXJfaXNzdWVyIiwiYXVkIjoieW91cl9hdWRpZW5jZSJ9.F4HX10HOJij4GX0LIfVLqniL9OfwIXND1TDrSBD3rho',
+            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InJhYmF0X2NvbnN0YXRldXIiLCJmaXJzdE5hbWUiOiJDb25zdGF0ZXVyIiwibGFzdE5hbWUiOiJSYWJhdCIsInVzZXJJZCI6ImQzYjc1MjhjLWQwNjMtNDMyNC04NWI0LTgxMGM5NjcyN2JhZSIsImFzc2lnbm1lbnRCQ0giOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiT2JzZXJ2ZXIiLCJleHAiOjE3MTYwODQ1NDksImlzcyI6InlvdXJfaXNzdWVyIiwiYXVkIjoieW91cl9hdWRpZW5jZSJ9.Ab78hWVUilUK-nRTZac2UX8C4OAA_zYe6dMflooIsu8',
       },
     );
     if (response.statusCode == 200) {

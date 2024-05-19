@@ -1,18 +1,19 @@
-// ignore_for_file: non_constant_identifier_names, use_super_parameters, avoid_print, duplicate_ignore
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+// ignore: unused_import
 import 'deces.dart';
 
 class InformationsDeclarantForm extends StatefulWidget {
   const InformationsDeclarantForm({Key? key}) : super(key: key);
+
   @override
   State<InformationsDeclarantForm> createState() =>
       _InformationsDeclarantFormState();
 }
 
 class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
+  
   final _formKey = GlobalKey<FormState>();
   bool _nomValid = true;
   bool _nomArabeValid = true;
@@ -28,7 +29,7 @@ class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
   final TextEditingController Prenom_declarant = TextEditingController();
   final TextEditingController Prenom_arabe_declarant = TextEditingController();
   final TextEditingController Telephone_declarant = TextEditingController();
-  final TextEditingController Num_piece_identite_declarant =TextEditingController();
+  final TextEditingController Num_piece_identite_declarant = TextEditingController();
 
   final List<String> _idTypeOptions = [
     'Carte d\'identité nationale',
@@ -36,51 +37,43 @@ class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
     'Carte de séjour',
   ];
 
-  // ignore: unused_field
-  final List<String> _lienAffiliation = [
-    'Conjoint',
-    'Père',
-    'Mère',
-    'Frère',
-    'Sœur',
-    'Autre',
-  ];
+  List<dynamic> _options4 = [];
 
-List<dynamic> _options4 = []; 
-// ignore: unused_element
-Future<void> _fetchOptions() async {
-  try {
-    final response4 = await http.get(Uri.parse(
-        'http://98.71.95.115/referential-api/affiliations'));
+  Future<void> _fetchOptions() async {
+    try {
+      final response4 = await http.get(
+          Uri.parse('http://98.71.95.115/referential-api/affiliations'));
 
-    if (response4.statusCode == 200) {
-      setState(() {
-        _options4 = json.decode(response4.body);
-      });
+      if (response4.statusCode == 200) {
+        setState(() {
+          _options4 = json.decode(response4.body);
+        });
+      }
+    } catch (error) {
+      print(error);
     }
-
-  } catch (error) {
-    print(error);
   }
-}
 
   String? _selectedIdType;
-  // ignore: unused_field
-  String? _selectedLienAffiliation;
 
-    @override
-      void initState() {
+  @override
+  void initState() {
     super.initState();
+    _fetchOptions(); // Fetch options when the widget initializes
     fetchData().then((data) {
       if (data != null) {
-        Nom_declarant.text = data['declaration']?['declarant']?['name'] ?? '';
-        Nom_arabe_declarant.text=data['declaration']?['declarant']?['nameAr'] ?? '';
-        Prenom_declarant.text=data['declaration']?['declarant']?['firstName'] ?? '';
-        Prenom_arabe_declarant.text=data['declaration']?['declarant']?['firstNameAr'] ?? '';
-        Telephone_declarant.text=data['declaration']?['declarant']?['phoneNumber'] ?? '';
-        Num_piece_identite_declarant.text=data['declaration']?['declarant']?['nationalID'] ?? '';
-        
-    
+        Nom_declarant.text =
+            data['declaration']?['declarant']?['name'] ?? '';
+        Nom_arabe_declarant.text =
+            data['declaration']?['declarant']?['nameAr'] ?? '';
+        Prenom_declarant.text =
+            data['declaration']?['declarant']?['firstName'] ?? '';
+        Prenom_arabe_declarant.text =
+            data['declaration']?['declarant']?['firstNameAr'] ?? '';
+        Telephone_declarant.text =
+            data['declaration']?['declarant']?['phoneNumber'] ?? '';
+        Num_piece_identite_declarant.text =
+            data['declaration']?['declarant']?['nationalID'] ?? '';
       }
     }).catchError((error) {
       print('Error: $error');
@@ -89,9 +82,7 @@ Future<void> _fetchOptions() async {
 
   @override
   void dispose() {
-   Nom_declarant.dispose();
-
-
+    Nom_declarant.dispose();
     super.dispose();
   }
 
@@ -114,7 +105,7 @@ Future<void> _fetchOptions() async {
                 child: Column(
                   children: [
                     Image.asset(
-                      'images/ikram_logo.png',
+                      'images/ekram_logo2.png',
                       width: 150,
                       height: 70,
                       alignment: Alignment.topLeft,
@@ -191,27 +182,15 @@ Future<void> _fetchOptions() async {
                               keyboardType: TextInputType.number,
                               isValid: _telValid,
                             ),
-                            // _buildDropdownButtonFormField(
-                            //   label: 'Lien d\'affiliation',
-                            //   items: _lienAffiliation,
-                            //   value: _selectedLienAffiliation,
-                            //   onChanged: (value) {
-                            //     setState(() {
-                            //       _selectedLienAffiliation = value;
-                            //     });
-                            //   },
-                            // ),
-
                             buildDropdown('Lien d\'affiliation', _options4),
                             const SizedBox(
                               height: 30,
                             ),
                             Container(
-                              margin:
-                                  const EdgeInsets.only(left: 70, right: 70),
+                              margin: const EdgeInsets.only(left: 70, right: 70),
                               height: 40,
                               child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
+                                style: ElevatedButton.styleFrom(
                                   backgroundColor: isPressed
                                       ? const Color(0xFF014a71)
                                       : (isHovered
@@ -226,28 +205,21 @@ Future<void> _fetchOptions() async {
                                 onPressed: () {
                                   setState(() {
                                     _nomValid = Nom_declarant.text.isNotEmpty;
-                                    _nomArabeValid =
-                                        Nom_arabe_declarant.text.isNotEmpty;
-                                    _prenomValid =
-                                        Prenom_declarant.text.isNotEmpty;
-                                    _prenomArabeValid =
-                                        Prenom_arabe_declarant.text.isNotEmpty;
-                                    _numPieceValid =
-                                        Num_piece_identite_declarant
-                                            .text.isNotEmpty;
-                                    _telValid =
-                                        Telephone_declarant.text.isNotEmpty;
+                                    _nomArabeValid = Nom_arabe_declarant.text.isNotEmpty;
+                                    _prenomValid = Prenom_declarant.text.isNotEmpty;
+                                    _prenomArabeValid = Prenom_arabe_declarant.text.isNotEmpty;
+                                    _numPieceValid = Num_piece_identite_declarant.text.isNotEmpty;
+                                    _telValid = Telephone_declarant.text.isNotEmpty;
                                   });
 
                                   if (_formKey.currentState!.validate()) {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => const InformationsDeceForm (),
+                                        builder: (context) => const InformationsDecesForm (),
                                       ),
                                     );
                                   }
-                                 
                                 },
                                 child: const Center(
                                   child: Text(
@@ -371,13 +343,13 @@ Future<void> _fetchOptions() async {
         children: [
           _buildCircleButton('1', const Color.fromARGB(255, 82, 53, 43)),
           _buildDivider(),
-          _buildCircleButton('2', const Color.fromARGB(255, 136, 194, 201)),
+          _buildCircleButton('2', const Color.fromARGB(255, 189, 184, 182)),
           _buildDivider(),
-          _buildCircleButton('3', const Color.fromARGB(255, 136, 194, 201)),
+          _buildCircleButton('3', const Color.fromARGB(255, 189, 184, 182)),
           _buildDivider(),
-          _buildCircleButton('4', const Color.fromARGB(255, 136, 194, 201)),
+          _buildCircleButton('4', const Color.fromARGB(255, 189, 184, 182)),
           _buildDivider(),
-          _buildCircleButton('5', const Color.fromARGB(255, 136, 194, 201)),
+          _buildCircleButton('5', const Color.fromARGB(255, 189, 184, 182)),
         ],
       ),
     );
@@ -415,33 +387,30 @@ Future<void> _fetchOptions() async {
 
 class InformationsDecesForm extends StatelessWidget {
   const InformationsDecesForm({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Container();
   }
 }
 
-
-  Future<Map<String, dynamic>?> fetchData() async {
-    final response = await http.get(
-      Uri.parse(
-          'http://98.71.95.115/orchestrator-api/processings/declaration-details/84c245cc-bc4c-4595-8057-fbc80746cf50?assignmentBCH=1'),
-      headers: {
-        'Authorization': 'Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InJhYmF0X2NvbnN0YXRldXIiLCJmaXJzdE5hbWUiOiJDb25zdGF0ZXVyIiwibGFzdE5hbWUiOiJSYWJhdCIsInVzZXJJZCI6ImQzYjc1MjhjLWQwNjMtNDMyNC04NWI0LTgxMGM5NjcyN2JhZSIsImFzc2lnbm1lbnRCQ0giOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiT2JzZXJ2ZXIiLCJleHAiOjE3MTYwNDYxODgsImlzcyI6InlvdXJfaXNzdWVyIiwiYXVkIjoieW91cl9hdWRpZW5jZSJ9.F4HX10HOJij4GX0LIfVLqniL9OfwIXND1TDrSBD3rho',
-      },
-    );
-    if (response.statusCode == 200) {
-      print('Response body: ${response.body}');
-      return json.decode(response.body);
-    } else {
-      print('Failed to load data. Status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
-      throw Exception('Failed to load data');
-    }
+Future<Map<String, dynamic>?> fetchData() async {
+  final response = await http.get(
+    Uri.parse(
+        'http://98.71.95.115/orchestrator-api/processings/declaration-details/84c245cc-bc4c-4595-8057-fbc80746cf50?assignmentBCH=1'),
+    headers: {
+      'Authorization':
+          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InJhYmF0X2NvbnN0YXRldXIiLCJmaXJzdE5hbWUiOiJDb25zdGF0ZXVyIiwibGFzdE5hbWUiOiJSYWJhdCIsInVzZXJJZCI6ImQzYjc1MjhjLWQwNjMtNDMyNC04NWI0LTgxMGM5NjcyN2JhZSIsImFzc2lnbm1lbnRCQ0giOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiT2JzZXJ2ZXIiLCJleHAiOjE3MTYwNzk4NjEsImlzcyI6InlvdXJfaXNzdWVyIiwiYXVkIjoieW91cl9hdWRpZW5jZSJ9.qYdp-vhk0aSI9afkwCgVygYSSugivmanfVXcK-WEvjs',
+    },
+  );
+  if (response.statusCode == 200) {
+    print('Response body: ${response.body}');
+    return json.decode(response.body);
+  } else {
+    print('Failed to load data. Status code: ${response.statusCode}');
+    print('Response body: ${response.body}');
+    throw Exception('Failed to load data');
   }
-
-
+}
 
 Widget buildDropdown(String label, List<dynamic> options) {
   return Container(

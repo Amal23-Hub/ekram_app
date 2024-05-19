@@ -116,7 +116,7 @@ Future<void> _fetchOptions() async {
                 child: Column(
                   children: [
                     Image.asset(
-                      'images/ikram_logo.png',
+                      'images/ekram_logo2.png',
                       width: 150,
                       height: 70,
                       alignment: Alignment.topLeft,
@@ -365,21 +365,44 @@ Future<void> _fetchOptions() async {
       ),
     );
   }
-
-  Widget _buildTabs() {
+  Widget _buildCircleButton2(Icon icon) {
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: const Color.fromARGB(255, 189, 184, 182),
+      ),
+      child: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            icon,
+          ],
+        ),
+      ),
+    );
+  }
+   Widget _buildTabs() {
     return Center(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildCircleButton('1', const Color.fromARGB(255, 82, 53, 43)),
+          _buildCircleButton2(const Icon(
+            Icons.verified,
+            size: 27,
+          )),
           _buildDivider(),
-          _buildCircleButton('2', const Color.fromARGB(255, 136, 194, 201)),
+          _buildCircleButton2(const Icon(
+            Icons.verified,
+            size: 27,
+          )),
           _buildDivider(),
-          _buildCircleButton('3', const Color.fromARGB(255, 136, 194, 201)),
+          _buildCircleButton('3', const Color.fromARGB(255, 82, 53, 43)),
           _buildDivider(),
-          _buildCircleButton('4', const Color.fromARGB(255, 136, 194, 201)),
+          _buildCircleButton('4', const Color.fromARGB(255, 189, 184, 182)),
           _buildDivider(),
-          _buildCircleButton('5', const Color.fromARGB(255, 136, 194, 201)),
+          _buildCircleButton('5', const Color.fromARGB(255, 189, 184, 182)),
         ],
       ),
     );
@@ -429,7 +452,7 @@ class InformationsDecesForm extends StatelessWidget {
       Uri.parse(
           'http://98.71.95.115/orchestrator-api/processings/declaration-details/84c245cc-bc4c-4595-8057-fbc80746cf50?assignmentBCH=1'),
       headers: {
-        'Authorization': 'Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InJhYmF0X2NvbnN0YXRldXIiLCJmaXJzdE5hbWUiOiJDb25zdGF0ZXVyIiwibGFzdE5hbWUiOiJSYWJhdCIsInVzZXJJZCI6ImQzYjc1MjhjLWQwNjMtNDMyNC04NWI0LTgxMGM5NjcyN2JhZSIsImFzc2lnbm1lbnRCQ0giOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiT2JzZXJ2ZXIiLCJleHAiOjE3MTYwNDYxODgsImlzcyI6InlvdXJfaXNzdWVyIiwiYXVkIjoieW91cl9hdWRpZW5jZSJ9.F4HX10HOJij4GX0LIfVLqniL9OfwIXND1TDrSBD3rho',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InJhYmF0X2NvbnN0YXRldXIiLCJmaXJzdE5hbWUiOiJDb25zdGF0ZXVyIiwibGFzdE5hbWUiOiJSYWJhdCIsInVzZXJJZCI6ImQzYjc1MjhjLWQwNjMtNDMyNC04NWI0LTgxMGM5NjcyN2JhZSIsImFzc2lnbm1lbnRCQ0giOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiT2JzZXJ2ZXIiLCJleHAiOjE3MTYwNzk4NjEsImlzcyI6InlvdXJfaXNzdWVyIiwiYXVkIjoieW91cl9hdWRpZW5jZSJ9.qYdp-vhk0aSI9afkwCgVygYSSugivmanfVXcK-WEvjs',
       },
     );
     if (response.statusCode == 200) {
