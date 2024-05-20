@@ -1,14 +1,13 @@
 
-// ignore_for_file: file_names, use_key_in_widget_constructors, library_private_types_in_public_api, use_super_parameters, avoid_unnecessary_containers, avoid_print, unused_import
+// ignore: file_names
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'login.dart';
-// import 'search.dart';
 import 'declarant.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
+import 'location.dart';
 
 class Accueil extends StatelessWidget {
   const Accueil({Key? key});
@@ -36,7 +35,7 @@ class Home extends StatelessWidget {
       child: ListView(
         children: <Widget>[
           const SizedBox(height: 20),
-           buildDataFetcher(),
+          buildDataFetcher(),
           Padding(
             padding: const EdgeInsets.only(left: 10, right: 10),
             child: GestureDetector(
@@ -46,12 +45,8 @@ class Home extends StatelessWidget {
                 //   MaterialPageRoute(builder: (context) => const MapScreen()),
                 // );
               },
-              
-
-              
             ),
           ),
-         
         ],
       ),
     );
@@ -75,11 +70,11 @@ class Home extends StatelessWidget {
                   icon: const Icon(Icons.circle),
                   label: 'Nouvelle Page',
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                const InformationsDeclarantForm()));
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) =>
+                    //             const InformationsDeclarantForm()));
                   },
                 ),
               ],
@@ -196,11 +191,9 @@ class Home extends StatelessWidget {
   }) {
     return Tab(
       icon: icon,
-      child: Container(
-        child: ElevatedButton(
-          onPressed: onPressed,
-          child: Text(label),
-        ),
+      child: ElevatedButton(
+        onPressed: onPressed,
+        child: Text(label),
       ),
     );
   }
@@ -229,13 +222,12 @@ class Home extends StatelessWidget {
       borderRadius: BorderRadius.vertical(
         bottom: Radius.circular(20),
       ),
-     gradient: LinearGradient(
-     colors: [Colors.white, Color.fromARGB(255, 178, 154, 127)],
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-   ),
+      gradient: LinearGradient(
+        colors: [Colors.white, Color.fromARGB(255, 178, 154, 127)],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      ),
     );
-   
   }
 
   Widget _topBar() {
@@ -285,23 +277,23 @@ class Home extends StatelessWidget {
   Widget _tabBar() {
     return const TabBar(
       labelPadding: EdgeInsets.all(0),
-      labelColor:  Color.fromARGB(255, 56, 44, 26),
-      indicatorColor:  Color.fromARGB(255, 56, 44, 26),
+      labelColor: Color.fromARGB(255, 56, 44, 26),
+      indicatorColor: Color.fromARGB(255, 56, 44, 26),
       unselectedLabelColor: Color.fromARGB(255, 248, 242, 227),
       tabs: [
         Tab(
           iconMargin: EdgeInsets.all(0),
-          icon: Icon(Icons.list , size: 28,),
+          icon: Icon(Icons.list, size: 28),
           text: 'List',
         ),
         Tab(
           iconMargin: EdgeInsets.all(0),
-          icon: Icon(Icons.notifications,size: 28,),
+          icon: Icon(Icons.notifications, size: 28),
           text: 'Notifications',
         ),
         Tab(
           iconMargin: EdgeInsets.all(0),
-          icon: Icon(Icons.location_on,size: 28,),
+          icon: Icon(Icons.location_on, size: 28),
           text: 'Location',
         ),
       ],
@@ -354,82 +346,19 @@ class _MenuButtonState extends State<MenuButton> {
   }
 }
 
-Widget buildDataFetcher() {
-  return FutureBuilder<List<Map<String, dynamic>>>(
-    future: fetchData(),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const CircularProgressIndicator();
-      } else if (snapshot.hasError) {
-        return Text('Error: ${snapshot.error}');
-      } else if (snapshot.hasData && snapshot.data != null) {
-        final data = snapshot.data!;
-        if (data.isNotEmpty) {
-          return SizedBox(
-            height: 100, // Hauteur fixe pour le ListView
-            child: ListView.builder(
-              itemCount: data.length,
-              itemBuilder: (context, index) {
-                final item = data[index];
-                return Padding(
-            padding: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const InformationsDeclarantForm(),
-                  ),
-                );
-              },
-               child:Card(
-                  color: const Color.fromARGB(255, 184, 175, 175),
-                  elevation: 5,
-                  child: ListTile(
-                    title: Text('Declaration Number: ${item['id'] ?? ''}'),
-                    
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                         Text('Declaration Id: ${item['declarationNumber'] ?? ''}'),
-                         Text('Nom: ${item['deceased']?['name'] ?? ''}'),
-                        Text('Date of Death: ${item['death']?['dateOfDeath'] ?? ''}'),
-                        Text('Age of Deceased: ${item['deceased']?['age'] ?? ''}'),
-                      ],
-                    ),
-                  ),
-                )
-            ),
-                );
-
-
-                
-                
-              },
-            ),
-          );
-        } else {
-          return const Text('No data available');
-        }
-      } else {
-        return const Text('No data available');
-      }
-    },
-  );
-}
 Future<List<Map<String, dynamic>>> fetchData() async {
   List<Map<String, dynamic>> allData = [];
   int pageNumber = 1;
-  bool hasMorePages = true;
+  const pageSize = 10;
 
-  while (hasMorePages) {
+  while (true) {
     final response = await http.get(
       Uri.parse(
-          'http://98.71.95.115/declaration-api/declarations?AssignmentBCH=1&StatusId=1&DateOfDeathStart=2024-05-15&DateOfDeathEnd=2024-05-17&page=$pageNumber'),
+          'http://98.71.95.115/declaration-api/declarations?AssignmentBCH=1&StatusId=1&DateOfDeathStart=2024-05-15&DateOfDeathEnd=2024-05-20'),
       headers: {
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InJhYmF0X2NvbnN0YXRldXIiLCJmaXJzdE5hbWUiOiJDb25zdGF0ZXVyIiwibGFzdE5hbWUiOiJSYWJhdCIsInVzZXJJZCI6ImQzYjc1MjhjLWQwNjMtNDMyNC04NWI0LTgxMGM5NjcyN2JhZSIsImFzc2lnbm1lbnRCQ0giOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiT2JzZXJ2ZXIiLCJleHAiOjE3MTU5NjIzOTUsImlzcyI6InlvdXJfaXNzdWVyIiwiYXVkIjoieW91cl9hdWRpZW5jZSJ9.SSBZ0Eh2hFsmm1DUjFaDXZX2cmUzKMnhhyRUEAB1Ark',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InJhYmF0X2NvbnN0YXRldXIiLCJmaXJzdE5hbWUiOiJDb25zdGF0ZXVyIiwibGFzdE5hbWUiOiJSYWJhdCIsInVzZXJJZCI6ImQzYjc1MjhjLWQwNjMtNDMyNC04NWI0LTgxMGM5NjcyN2JhZSIsImFzc2lnbm1lbnRCQ0giOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiT2JzZXJ2ZXIiLCJleHAiOjE3MTYyMDI1ODksImlzcyI6InlvdXJfaXNzdWVyIiwiYXVkIjoieW91cl9hdWRpZW5jZSJ9.oQk0wVgnt3fRKStDLT7oj--cVqQoyhmDEPOYhwXqPF8',
         'X-Pagenumber': pageNumber.toString(),
-        'X-Pagesize': '10',
+        'X-Pagesize': pageSize.toString(),
       },
     );
     if (response.statusCode == 200) {
@@ -441,18 +370,101 @@ Future<List<Map<String, dynamic>>> fetchData() async {
             .toList();
         print('Parsed data: $data');
         allData.addAll(data);
+        if (data.length < pageSize) {
+          break;
+        }
         pageNumber++;
       } else {
         throw Exception('Unexpected response format');
       }
-
-      if (!responseBody.containsKey('next_page_url')) {
-        hasMorePages = false;
-      }
     } else {
-      throw Exception('Failed to load data. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to load data. Status code: ${response.statusCode}');
     }
   }
-
   return allData;
+}
+
+Widget buildDataFetcher() {
+  return FutureBuilder<List<Map<String, dynamic>>>(
+    future: fetchData(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const CircularProgressIndicator();
+      } else if (snapshot.hasError) {
+        return Text('Error: ${snapshot.error}');
+      } else if (snapshot.hasData && snapshot.data != null) {
+        final data = snapshot.data!;
+        if (data.isNotEmpty) {
+          // ignore: sized_box_for_whitespace
+          return Container(
+            height:
+                MediaQuery.of(context).size.height, // Utilisez une taille appropriée ici
+            child: ListView.builder(
+              itemCount: data.length,
+              itemBuilder: (context, index) {
+                final item = data[index];
+                return Padding(
+                  padding: const EdgeInsets.only(left: 15, right: 15, bottom: 20),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => InformationsDeclarantForm(declarationDetails: item),
+                        ),
+                      );
+                    },
+                    child: Card(
+                      color: const Color.fromARGB(255, 248, 242, 227),
+                      elevation: 5,
+                      child: ListTile(
+                        title: Text(
+                          '${item['deceased']?['name'] ?? ''}',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 19,
+                            color: Color.fromARGB(255, 93, 60, 50),
+                          ),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('N°: ${item['declarationNumber'] ?? ''}',
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text('Date de décès: ${item['death']?['dateOfDeath'] ?? ''}',
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text('Age de défunt: ${item['deceased']?['age'] ?? ''}',
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.location_on),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MapScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        } else {
+          return const Text('No data available');
+        }
+      } else {
+        return const Text('No data available');
+      }
+    },
+  );
 }

@@ -1,11 +1,25 @@
+// ignore_for_file: non_constant_identifier_names, use_super_parameters, avoid_print, duplicate_ignore, unused_element, unused_field
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-// ignore: unused_import
+
 import 'deces.dart';
 
+class DataHolder {
+  static String nomDeclarant = '';
+  static String nomArabeDeclarant = '';
+  static String prenomDeclarant = '';
+  static String prenomArabeDeclarant = '';
+  static String numPieceIdentiteDeclarant = '';
+  static String telephoneDeclarant = '';
+  static String selectedIdType = '';
+}
+  
+
 class InformationsDeclarantForm extends StatefulWidget {
-  const InformationsDeclarantForm({Key? key}) : super(key: key);
+  final Map<String, dynamic> declarationDetails;
+    const InformationsDeclarantForm({Key? key, required this.declarationDetails}) : super(key: key);
 
   @override
   State<InformationsDeclarantForm> createState() =>
@@ -13,14 +27,15 @@ class InformationsDeclarantForm extends StatefulWidget {
 }
 
 class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
-  
   final _formKey = GlobalKey<FormState>();
+
   bool _nomValid = true;
   bool _nomArabeValid = true;
   bool _prenomValid = true;
   bool _prenomArabeValid = true;
   bool _numPieceValid = true;
   bool _telValid = true;
+
   bool isHovered = false;
   bool isPressed = false;
 
@@ -29,7 +44,8 @@ class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
   final TextEditingController Prenom_declarant = TextEditingController();
   final TextEditingController Prenom_arabe_declarant = TextEditingController();
   final TextEditingController Telephone_declarant = TextEditingController();
-  final TextEditingController Num_piece_identite_declarant = TextEditingController();
+  final TextEditingController Num_piece_identite_declarant =
+      TextEditingController();
 
   final List<String> _idTypeOptions = [
     'Carte d\'identité nationale',
@@ -37,12 +53,21 @@ class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
     'Carte de séjour',
   ];
 
+  final List<String> _lienAffiliation = [
+    'Conjoint',
+    'Père',
+    'Mère',
+    'Frère',
+    'Sœur',
+    'Autre',
+  ];
+
   List<dynamic> _options4 = [];
 
   Future<void> _fetchOptions() async {
     try {
-      final response4 = await http.get(
-          Uri.parse('http://98.71.95.115/referential-api/affiliations'));
+      final response4 = await http
+          .get(Uri.parse('http://98.71.95.115/referential-api/affiliations'));
 
       if (response4.statusCode == 200) {
         setState(() {
@@ -55,15 +80,14 @@ class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
   }
 
   String? _selectedIdType;
+  // String? _selectedLienAffiliation;
 
   @override
   void initState() {
     super.initState();
-    _fetchOptions(); // Fetch options when the widget initializes
     fetchData().then((data) {
       if (data != null) {
-        Nom_declarant.text =
-            data['declaration']?['declarant']?['name'] ?? '';
+        Nom_declarant.text = data['declaration']?['declarant']?['name'] ?? '';
         Nom_arabe_declarant.text =
             data['declaration']?['declarant']?['nameAr'] ?? '';
         Prenom_declarant.text =
@@ -83,6 +107,7 @@ class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
   @override
   void dispose() {
     Nom_declarant.dispose();
+
     super.dispose();
   }
 
@@ -92,7 +117,7 @@ class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("images/bg.png"),
+            image: AssetImage("images/bg.jpg"),
             fit: BoxFit.cover,
           ),
         ),
@@ -146,20 +171,28 @@ class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
                               controller: Nom_declarant,
                               isValid: _nomValid,
                             ),
-                            _buildTextField(
-                              label: 'Nom en Arabe',
-                              controller: Nom_arabe_declarant,
-                              isValid: _nomArabeValid,
+                            _buildTextField2(
+                                label: 'Nom en Arabe',
+                                controller: Nom_arabe_declarant,
+                                isValid: _nomArabeValid,
+                                isArabicRequired: true,
+                              onChanged: (text) {
+                                setState(() {});
+                              },
                             ),
                             _buildTextField(
                               label: 'Prénom',
                               controller: Prenom_declarant,
                               isValid: _prenomValid,
                             ),
-                            _buildTextField(
+                            _buildTextField2(
                               label: 'Prénom en Arabe',
                               controller: Prenom_arabe_declarant,
                               isValid: _prenomArabeValid,
+                              isArabicRequired: true,
+                              onChanged: (text) {
+                                setState(() {});
+                              },
                             ),
                             _buildDropdownButtonFormField(
                               label: 'Type de pièce d\'identité',
@@ -182,12 +215,24 @@ class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
                               keyboardType: TextInputType.number,
                               isValid: _telValid,
                             ),
-                            buildDropdown('Lien d\'affiliation', _options4),
+                            // _buildDropdownButtonFormField(
+                            //   label: 'Lien d\'affiliation',
+                            //   items: _lienAffiliation,
+                            //   value: _selectedLienAffiliation,
+                            //   onChanged: (value) {
+                            //     setState(() {
+                            //       _selectedLienAffiliation = value;
+                            //     });
+                            //   },
+                            // ),
+
+                            // buildDropdown('Lien d\'affiliation', _options4),
                             const SizedBox(
                               height: 30,
                             ),
                             Container(
-                              margin: const EdgeInsets.only(left: 70, right: 70),
+                              margin:
+                                  const EdgeInsets.only(left: 70, right: 70),
                               height: 40,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
@@ -205,18 +250,33 @@ class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
                                 onPressed: () {
                                   setState(() {
                                     _nomValid = Nom_declarant.text.isNotEmpty;
-                                    _nomArabeValid = Nom_arabe_declarant.text.isNotEmpty;
-                                    _prenomValid = Prenom_declarant.text.isNotEmpty;
-                                    _prenomArabeValid = Prenom_arabe_declarant.text.isNotEmpty;
-                                    _numPieceValid = Num_piece_identite_declarant.text.isNotEmpty;
-                                    _telValid = Telephone_declarant.text.isNotEmpty;
+                                    _nomArabeValid =
+                                        Nom_arabe_declarant.text.isNotEmpty;
+                                    _prenomValid =
+                                        Prenom_declarant.text.isNotEmpty;
+                                    _prenomArabeValid =
+                                        Prenom_arabe_declarant.text.isNotEmpty;
+                                    _numPieceValid =
+                                        Num_piece_identite_declarant
+                                            .text.isNotEmpty;
+                                    _telValid =
+                                        Telephone_declarant.text.isNotEmpty;
                                   });
 
-                                  if (_formKey.currentState!.validate()) {
+                                 if (_formKey.currentState!.validate() &&
+                                      estArabe(texte: Prenom_arabe_declarant.text)) {
+                                    DataHolder.nomDeclarant = Nom_declarant.text;
+                                    DataHolder.nomArabeDeclarant = Nom_arabe_declarant.text;
+                                    DataHolder.prenomDeclarant = Prenom_declarant.text;
+                                    DataHolder.prenomArabeDeclarant = Prenom_arabe_declarant.text;
+                                    DataHolder.numPieceIdentiteDeclarant = Num_piece_identite_declarant.text;
+                                    DataHolder.telephoneDeclarant = Telephone_declarant.text;
+                                    DataHolder.selectedIdType = _selectedIdType ?? '';
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => const InformationsDecesForm (),
+                                        builder: (context) =>
+                                            const InformationsDeceForm(),
                                       ),
                                     );
                                   }
@@ -387,6 +447,7 @@ class _InformationsDeclarantFormState extends State<InformationsDeclarantForm> {
 
 class InformationsDecesForm extends StatelessWidget {
   const InformationsDecesForm({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container();
@@ -399,7 +460,7 @@ Future<Map<String, dynamic>?> fetchData() async {
         'http://98.71.95.115/orchestrator-api/processings/declaration-details/84c245cc-bc4c-4595-8057-fbc80746cf50?assignmentBCH=1'),
     headers: {
       'Authorization':
-          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InJhYmF0X2NvbnN0YXRldXIiLCJmaXJzdE5hbWUiOiJDb25zdGF0ZXVyIiwibGFzdE5hbWUiOiJSYWJhdCIsInVzZXJJZCI6ImQzYjc1MjhjLWQwNjMtNDMyNC04NWI0LTgxMGM5NjcyN2JhZSIsImFzc2lnbm1lbnRCQ0giOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiT2JzZXJ2ZXIiLCJleHAiOjE3MTYwNzk4NjEsImlzcyI6InlvdXJfaXNzdWVyIiwiYXVkIjoieW91cl9hdWRpZW5jZSJ9.qYdp-vhk0aSI9afkwCgVygYSSugivmanfVXcK-WEvjs',
+          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InJhYmF0X2NvbnN0YXRldXIiLCJmaXJzdE5hbWUiOiJDb25zdGF0ZXVyIiwibGFzdE5hbWUiOiJSYWJhdCIsInVzZXJJZCI6ImQzYjc1MjhjLWQwNjMtNDMyNC04NWI0LTgxMGM5NjcyN2JhZSIsImFzc2lnbm1lbnRCQ0giOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiT2JzZXJ2ZXIiLCJleHAiOjE3MTYyMDY4NDcsImlzcyI6InlvdXJfaXNzdWVyIiwiYXVkIjoieW91cl9hdWRpZW5jZSJ9.hQWd_6aLXZVeZ3qFaT-0Kr1qWlgO2GldyIdrCc9Neb4',
     },
   );
   if (response.statusCode == 200) {
@@ -447,4 +508,89 @@ Widget buildDropdown(String label, List<dynamic> options) {
       },
     ),
   );
+}
+
+Widget _buildCircleButton2(Icon icon) {
+  return Container(
+    width: 40,
+    height: 40,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(10),
+      color: const Color.fromARGB(255, 189, 184, 182),
+    ),
+    child: Center(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          icon,
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _buildTextField2({
+  required String label,
+  required TextEditingController controller,
+  bool isValid = true,
+  bool isArabicRequired = false,
+  TextInputType? keyboardType,
+  void Function(String)? onChanged,
+}) {
+  final isArabic = estArabe(texte: controller.text);
+
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 22),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextFormField(
+          controller: controller,
+          keyboardType: keyboardType ?? TextInputType.text,
+          onChanged: onChanged,
+          decoration: InputDecoration(
+            labelText: '$label ${isValid ? '*' : ''}',
+            labelStyle: const TextStyle(
+              color: Color.fromARGB(255, 69, 67, 67),
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
+            border: const UnderlineInputBorder(
+              borderSide: BorderSide(width: 2, color: Color(0xFF014a71)),
+            ),
+            focusedBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(width: 2, color: Color(0xFF014a71)),
+            ),
+          ),
+        ),
+        if (!isValid)
+          const Padding(
+            padding: EdgeInsets.only(top: 4, left: 4),
+            child: Text(
+              'Ce champ est obligatoire',
+              style: TextStyle(
+                color: Color.fromARGB(255, 199, 49, 39),
+                fontSize: 12,
+              ),
+            ),
+          ),
+        if (!isArabic && controller.text.isNotEmpty)
+          const Padding(
+            padding: EdgeInsets.only(top: 4, left: 4),
+            child: Text(
+              'Ce champ doit être en arabe',
+              style: TextStyle(
+                color: Color.fromARGB(255, 199, 49, 39),
+                fontSize: 12,
+              ),
+            ),
+          ),
+      ],
+    ),
+  );
+}
+
+bool estArabe({required String texte}) {
+  final test = RegExp(r'^[\u0621-\u064A\u0660-\u0669\s\d]+$').hasMatch(texte);
+  return test;
 }
