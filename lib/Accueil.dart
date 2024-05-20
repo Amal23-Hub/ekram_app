@@ -1,4 +1,3 @@
-
 // ignore: file_names
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
@@ -447,7 +446,7 @@ Widget buildDataFetcher() {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => MapScreen(),
+                                builder: (context) => const MapScreen(),
                               ),
                             );
                           },

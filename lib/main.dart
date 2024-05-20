@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 // import 'declarant.dart';
 // import 'testlocation.dart';
-import 'location.dart';
+import 'map.dart';
 // import 'order_traking_dart.dart';
 // import 'test3.dart';
 // import 'test2.dart';
@@ -16,10 +16,9 @@ class IkramApp extends StatelessWidget {
   const IkramApp({super.key});
   @override
   Widget build(BuildContext context) {
-     return MaterialApp(
-      title: 'Flutter Demo',
+     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: MapScreen(),
+      home: MapScreenn(),
     );
   }
 }
