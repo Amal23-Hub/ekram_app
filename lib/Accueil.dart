@@ -6,7 +6,7 @@ import 'login.dart';
 import 'declarant.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'location.dart';
+import 'map.dart';
 
 class Accueil extends StatelessWidget {
   const Accueil({Key? key});
@@ -39,10 +39,10 @@ class Home extends StatelessWidget {
             padding: const EdgeInsets.only(left: 10, right: 10),
             child: GestureDetector(
               onTap: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => const MapScreen()),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MapScreenn()),
+                );
               },
             ),
           ),
@@ -68,12 +68,13 @@ class Home extends StatelessWidget {
                 tabBarViewItem2(
                   icon: const Icon(Icons.circle),
                   label: 'Nouvelle Page',
-                  onPressed: () {
-                    // Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) =>
-                    //             const InformationsDeclarantForm()));
+                  onPressed: ()
+                   {
+                  //   Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //           builder: (context) =>
+                  //               const InformationsDeclarantForm()));
                   },
                 ),
               ],
@@ -294,6 +295,7 @@ class Home extends StatelessWidget {
           iconMargin: EdgeInsets.all(0),
           icon: Icon(Icons.location_on, size: 28),
           text: 'Location',
+          
         ),
       ],
     );
@@ -355,7 +357,7 @@ Future<List<Map<String, dynamic>>> fetchData() async {
       Uri.parse(
           'http://98.71.95.115/declaration-api/declarations?AssignmentBCH=1&StatusId=1&DateOfDeathStart=2024-05-15&DateOfDeathEnd=2024-05-20'),
       headers: {
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InJhYmF0X2NvbnN0YXRldXIiLCJmaXJzdE5hbWUiOiJDb25zdGF0ZXVyIiwibGFzdE5hbWUiOiJSYWJhdCIsInVzZXJJZCI6ImQzYjc1MjhjLWQwNjMtNDMyNC04NWI0LTgxMGM5NjcyN2JhZSIsImFzc2lnbm1lbnRCQ0giOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiT2JzZXJ2ZXIiLCJleHAiOjE3MTYyMDI1ODksImlzcyI6InlvdXJfaXNzdWVyIiwiYXVkIjoieW91cl9hdWRpZW5jZSJ9.oQk0wVgnt3fRKStDLT7oj--cVqQoyhmDEPOYhwXqPF8',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InJhYmF0X2NvbnN0YXRldXIiLCJmaXJzdE5hbWUiOiJDb25zdGF0ZXVyIiwibGFzdE5hbWUiOiJSYWJhdCIsInVzZXJJZCI6ImQzYjc1MjhjLWQwNjMtNDMyNC04NWI0LTgxMGM5NjcyN2JhZSIsImFzc2lnbm1lbnRCQ0giOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiT2JzZXJ2ZXIiLCJleHAiOjE3MTYyODg1ODAsImlzcyI6InlvdXJfaXNzdWVyIiwiYXVkIjoieW91cl9hdWRpZW5jZSJ9.i8Rr5d7sxX3GHRP4Mtg58sya1tJSniyDYEeVCY65Wuk',
         'X-Pagenumber': pageNumber.toString(),
         'X-Pagesize': pageSize.toString(),
       },
@@ -446,7 +448,7 @@ Widget buildDataFetcher() {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const MapScreen(),
+                                builder: (context) => const MapScreenn(),
                               ),
                             );
                           },

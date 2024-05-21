@@ -68,7 +68,7 @@ class _LoginState extends State<Login> {
     return [
       
       Image.asset('images/ekram_logo2.png', height: 180, width: 290),
-      // const SizedBox(height: 35),
+     const SizedBox(height: 35),
       TextField(
         controller: usernameController,
         focusNode: usernameFocusNode,
@@ -92,7 +92,7 @@ class _LoginState extends State<Login> {
             : null,
         ),
       ),
-      const SizedBox(height: 19),
+      const SizedBox(height: 22),
       TextField(
         controller: passwordController,
         focusNode: passwordFocusNode,
@@ -141,9 +141,11 @@ class _LoginState extends State<Login> {
                 color: Color.fromARGB(255, 71, 42, 32),
               ),
             ),
+            
           ),
         ),
       ),
+      const SizedBox(height: 22,),
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 20),
         child: MouseRegion(
@@ -157,8 +159,9 @@ class _LoginState extends State<Login> {
               isHovered = false;
             });
           },
+          
           child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
+              style: ElevatedButton.styleFrom(
               backgroundColor: isPressed
                   ? const Color.fromARGB(255, 138, 152, 160)
                   : (isHovered ? const Color.fromARGB(255, 82, 53, 43): const Color.fromARGB(255, 82, 53, 43)),
@@ -190,6 +193,7 @@ class _LoginState extends State<Login> {
                   passwordErrorMessage = isArabic
                       ? '.الرجاء إدخال كلمة المرور الخاصة بك'
                       : 'Veuillez saisir votre mot de passe.';
+                      
                 });
               } else {
                 setState(() {
@@ -201,6 +205,7 @@ class _LoginState extends State<Login> {
                 await callApi();
               }
               _showEnableLocationDialog();
+              
             },
             child: Text(
               isArabic ? 'تسجيل الدخول' : 'Se Connecter',
