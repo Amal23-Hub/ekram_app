@@ -1,3 +1,7 @@
+analyzer:
+  errors:
+    prefer_single_quotes: ignore
+    unused_import: ignore
 include: package:flutter_lints/flutter.yaml
 
 linter:

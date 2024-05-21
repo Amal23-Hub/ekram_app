@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'decede.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:intl/intl.dart';
 
 class InformationsDeceForm extends StatefulWidget {
   const InformationsDeceForm({Key? key}) : super(key: key);
@@ -65,7 +66,7 @@ class _InformationsDeceFormState extends State<InformationsDeceForm> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("images/bg.png"),
+            image: AssetImage("images/bg.jpg"),
             fit: BoxFit.cover,
           ),
         ),
@@ -193,13 +194,13 @@ class _InformationsDeceFormState extends State<InformationsDeceForm> {
 
                                   if (_formKey.currentState!.validate() &&
                                       _AdresselValid) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const  InformationsDeclarantForm(),
-                                      ),
-                                    );
+                                    // Navigator.push(
+                                    //   context
+                                    //   // MaterialPageRoute(
+                                    //   //   builder: (context) =>
+                                    //   //       const  InformationsDeclarantForm(),
+                                    //   // ),
+                                    // );
                                   }
                                 },
                                 child: const Center(
@@ -229,38 +230,72 @@ class _InformationsDeceFormState extends State<InformationsDeceForm> {
     );
   }
 
-  // Vos méthodes de création de widgets
-  // ...
+Future<void> _selectedDate(BuildContext context) async {
+  DateTime? picked = await showDatePicker(
+    context: context,
+    initialDate: DateTime.now(),
+    firstDate: DateTime(1900),
+    lastDate: DateTime(2100),
+    // locale: const Locale('fr', 'FR'), 
+    builder: (BuildContext context, Widget? child) {
+      return Theme(
+        data: ThemeData.light().copyWith(
+          colorScheme: const ColorScheme.light(primary: Color.fromARGB(255, 82, 53, 43)),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              foregroundColor: const Color.fromARGB(255, 82, 53, 43),
+            ),
+          ),
+        ),
+        child: child!,
+      );
+    },
+  );
 
-  Future<void> _selectedDate(BuildContext context) async {
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2100),
-    );
-
-    if (picked != null) {
-      setState(() {
-        date_deces_controller.text = picked.toString().split(" ")[0];
-        });
-      }
-    }
-
-  Future<void> _selectedTime(BuildContext context) async {
-    TimeOfDay time = TimeOfDay.now();
-    TimeOfDay? selectedTime = await showTimePicker(
-      context: context,
-      initialTime: time,
-      initialEntryMode: TimePickerEntryMode.dial,
-    );
-
-    if (selectedTime != null) {
-      setState(() {
-        time_deces_controller.text = selectedTime.format(context);
-      });
-    }
+  if (picked != null) {
+    // Formater la date en français
+    String formattedDate = DateFormat.yMd('fr_FR').format(picked);
+    
+    setState(() {
+      date_deces_controller.text = formattedDate;
+    });
   }
+}
+
+Future<void> _selectedTime(BuildContext context) async {
+  TimeOfDay time = TimeOfDay.now();
+  TimeOfDay? selectedTime = await showTimePicker(
+    context: context,
+    initialTime: time,
+    initialEntryMode: TimePickerEntryMode.dial,
+    builder: (BuildContext context, Widget? child) {
+      return Theme(
+        data: ThemeData.light().copyWith(
+          colorScheme: const ColorScheme.light(
+            primary: Color.fromARGB(255, 82, 53, 43),
+            onPrimary: Colors.white,
+          ),
+          textTheme: const TextTheme(
+            displayMedium: TextStyle(
+              color: Colors.black,
+              fontSize: 24,
+            ),
+            titleLarge: TextStyle(
+              color: Color.fromARGB(255, 82, 53, 43), // Couleur personnalisée pour AM et PM
+            ),
+          ),
+        ),
+        child: child!,
+      );
+    },
+  );
+
+  if (selectedTime != null) {
+    setState(() {
+      time_deces_controller.text = selectedTime.format(context);
+    });
+  }
+}
 
   Widget _buildTextField({
     required String label,
@@ -452,7 +487,7 @@ class _InformationsDeceFormState extends State<InformationsDeceForm> {
           'http://98.71.95.115/orchestrator-api/processings/declaration-details/84c245cc-bc4c-4595-8057-fbc80746cf50?assignmentBCH=1'),
       headers: {
         'Authorization':
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InJhYmF0X2NvbnN0YXRldXIiLCJmaXJzdE5hbWUiOiJDb25zdGF0ZXVyIiwibGFzdE5hbWUiOiJSYWJhdCIsInVzZXJJZCI6ImQzYjc1MjhjLWQwNjMtNDMyNC04NWI0LTgxMGM5NjcyN2JhZSIsImFzc2lnbm1lbnRCQ0giOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiT2JzZXJ2ZXIiLCJleHAiOjE3MTYxNDEzNDksImlzcyI6InlvdXJfaXNzdWVyIiwiYXVkIjoieW91cl9hdWRpZW5jZSJ9.pk-WGGlnnIwlEXM44vk5Z7Q52oAmXrmpx7ikZO8gHtM',
+            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InJhYmF0X2NvbnN0YXRldXIiLCJmaXJzdE5hbWUiOiJDb25zdGF0ZXVyIiwibGFzdE5hbWUiOiJSYWJhdCIsInVzZXJJZCI6ImQzYjc1MjhjLWQwNjMtNDMyNC04NWI0LTgxMGM5NjcyN2JhZSIsImFzc2lnbm1lbnRCQ0giOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiT2JzZXJ2ZXIiLCJleHAiOjE3MTYyODg1ODAsImlzcyI6InlvdXJfaXNzdWVyIiwiYXVkIjoieW91cl9hdWRpZW5jZSJ9.i8Rr5d7sxX3GHRP4Mtg58sya1tJSniyDYEeVCY65Wuk',
       },
     );
     if (response.statusCode == 200) {

@@ -37,34 +37,10 @@ class _MapScreenState extends State<MapScreenn> {
         Marker(
           markerId: const MarkerId('current_position'),
           position: currentPosition,
-          icon: BitmapDescriptor.defaultMarker,
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed), // Couleur rouge pour le marqueur
           infoWindow: InfoWindow(
             title: 'Your Current Position',
             snippet: placemark.subLocality ?? placemark.locality,
-          ),
-        ),
-      );
-    });
-
-    // Mettre à jour l'icône du marqueur
-    await _updateMarkerIcon();
-  }
-
-  Future<void> _updateMarkerIcon() async {
-    // Charger l'icône depuis les assets
-    final BitmapDescriptor icon =
-        await BitmapDescriptor.fromAssetImage(const ImageConfiguration(), 'assets/red_marker.png');
-
-    setState(() {
-      // Mettre à jour le marqueur avec l'icône chargée depuis les assets
-      _markers.removeWhere((marker) => marker.markerId.value == 'current_position');
-      _markers.add(
-        Marker(
-          markerId: const MarkerId('current_position'),
-          position: _markers.first.position,
-          icon: icon,
-          infoWindow: const InfoWindow(
-            title: 'Your Current Position',
           ),
         ),
       );
